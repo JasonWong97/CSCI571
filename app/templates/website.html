@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HW2 page</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Jiacheng Weng" />
+    <meta name="description" content="CSCI571 homework 2" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Comfortaa"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div id="homepage">
+        <div class="header_text">
+          <h2>Blood Pressure Predictor</h2>
+          <p>Fill out the form to get your Blood Pressure estimate!</p>
+        </div>
+
+        <div class="input_and_button">
+          <div class="input_and_button_inner">
+            <label for="fage"
+              ><p class="label_text">
+                Age<span class="label_star"> * </span>
+              </p></label
+            >
+
+            <div class="num-in">
+              <form onsubmit="return false">
+                <input
+                  type="text"
+                  class="in-num"
+                  id="iage"
+                  name="nage"
+                  pattern="^[1-9]\d*"
+                  required
+                  placeholder="Enter age in years"
+                  oninvalid="setCustomValidity('Please enter a number')"
+                  oninput="setCustomValidity('')"
+                />
+                <input id="iage_submit" type="submit" style="display: none" />
+              </form>
+              <div class="all-span">
+                <span
+                  class="plus plus_age"
+                  onclick="plus_age(); return false"
+                ></span>
+                <span
+                  class="minus dis minus_age"
+                  onclick="minus_age(); return false"
+                ></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="input_and_button_inner">
+            <label for="fweight"
+              ><p class="label_text">
+                Weight<span class="label_star"> * </span>
+              </p></label
+            >
+
+            <div class="num-in">
+              <form onsubmit="return false">
+                <input
+                  type="text"
+                  class="in-num"
+                  id="iweight"
+                  name="nweight"
+                  pattern="^[1-9]\d*"
+                  required
+                  placeholder="Enter weight in kg"
+                  oninvalid="setCustomValidity('Please enter a number')"
+                  oninput="setCustomValidity('')"
+                />
+                <input
+                  id="iweight_submit"
+                  type="submit"
+                  style="display: none"
+                />
+              </form>
+              <div class="all-span">
+                <span
+                  class="plus plus_weight"
+                  onclick="plus_weight(); return false"
+                ></span>
+                <span
+                  class="minus dis minus_weight"
+                  onclick="minus_weight(); return false"
+                ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="calculate">
+          <button id="button1">Calculate</button>
+          <p id="ipressure">{{pressure}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- <script src="https://bytes.usc.edu/~saty/tools/xem/c/prtt.js"></script> -->
+    <script>
+      // fetch() is an alternate/better/newer way to fetch data,
+      // compared to XHR. Below, uncomment/comment either 'DATA'
+      // line...
+
+      function minus_age() {
+        let a = document.getElementById("iage");
+        if (isNaN(a.value)) {
+          return false;
+        } else {
+          a.value = Number(a.value) - 1;
+        }
+      }
+      function plus_age() {
+        let a = document.getElementById("iage");
+        if (isNaN(a.value)) {
+          return false;
+        } else {
+          a.value = Number(a.value) + 1;
+        }
+      }
+      function minus_weight() {
+        let a = document.getElementById("iweight");
+        if (isNaN(a.value)) {
+          return false;
+        } else {
+          a.value = Number(a.value) - 1;
+        }
+      }
+      function plus_weight() {
+        let a = document.getElementById("iweight");
+        if (isNaN(a.value)) {
+          return false;
+        } else {
+          a.value = Number(a.value) + 1;
+        }
+      }
+      document.getElementById("button1").onclick = function checksubmit() {
+        let age = document.getElementById("iage");
+        let weight = document.getElementById("iweight");
+        let pressure = document.getElementById("ipressure");
+        let age_submit = document.getElementById("iage_submit");
+        let weight_submit = document.getElementById("iweight_submit");
+
+        age_submit.click();
+        weight_submit.click();
+        console.log(age_submit);
+        console.log(weight_submit);
+        console.log(age);
+        console.log(weight);
+
+        console.log(isNaN(age.value));
+        console.log(isNaN(weight.value));
+        if (age.value === "" || weight.value === "") {
+          console.log("eee");
+          return false;
+        } else if (isNaN(age.value) || isNaN(weight.value)) {
+          return false;
+        }
+        if (Number(age.value) <= 0 || Number(weight.value) <= 0) {
+          return false;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/", true);
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.send(`age=${age.value}&weight=${weight.value}`);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            pressure.innerHTML = xhr.responseText;
+            age.value = "";
+            weight.value = "";
+          }
+        };
+      };
+    </script>
+  </body>
+</html>
